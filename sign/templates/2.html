@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>动态添加表格示例</title>
+<script language="javascript">
+//CopyRight@liwei 2005/11
+//动态删除行的函数还没有完成。注意innerHTML里面的控件代码属性赋值的时候不要使用引号
+function addLine(){
+    var newLine = planTable.rows.length;
+    var row = planTable.insertRow(newLine);        
+    var col = row.insertCell(0);    
+    col.innerHTML = "<input type=checkbox name = chk" + newLine + ">";
+    col = row.insertCell(1);
+    col.innerHTML = "<input type=text size=8>";
+    col = row.insertCell(2);
+    col.innerHTML = "<select name=object><option value=1>软件项目1</option><option value=2>软件项目2</option></select>";
+    col = row.insertCell(3);
+        col.innerHTML = "<select name=select><option value=1>计划编号1</option><option value=2>计划编号2</option></select>";
+    col = row.insertCell(4);
+    col.innerHTML = "<textarea name=textarea cols='40'></textarea>";
+    return newLine;
+}
+function keyDwonEvent(){
+    //alert(event.keyCode);
+    var newLine;
+    var txt;
+    if (event.keyCode == 13&&event.ctrlKey) {
+        newLine = addLine();
+    }
+    /*
+    txt = "line"+newLine+"startTime"    
+    txt.setFocus;alert(txt);*/
+}
+function delLine(){
+    var i;
+    var count;
+    count = planTable.rows.length;
+    if(count>2){
+    planTable.deleteRow(planTable.rows.length-1)
+        for(i=0;i<count-1;i++){
+            //if(document.chk[i].checked){
+                //alert("aa");
+            //}
+        }
+    }
+}
+</script>
+</head>
+
+<body>
+<center>
+<table border="0" width="80%" align="center">
+<tr align="center" valign="top">
+<td height="37" colspan="9"><h2 align="center">日工作计划报告单</h2></td>
+</tr>
+<tr>
+<td>
+</td>
+</tr>
+
+<tr>
+  <td height="30">&nbsp;</td>
+  <td width="15%">填表人: </td>
+  <td width="15%"><input name="text2" type="text" disabled value="职员1" size="10"></td>
+  <td width="1%">&nbsp;</td>
+  <td width="21%">&nbsp;</td>
+  <td>&nbsp;</td>
+  <td><input name="button" type="button" onClick="addLine()" value="新增计划项"></td>
+  <td><input name="button2" type="button" onClick="delLine()" value="删除计划项"></td>
+  <td><input name="button3" type="button" value="提交计划报表"></td>
+</tr>
+<tr>
+<td width="6%" height="19">&nbsp;
+  </td>
+<td colspan="4"><font  size="-1"color="#FF0000">注:起止时间栏请按照 HH:SS-HH:SS 格式输入</font></td>
+
+<td width="6%">&nbsp;</td>
+<td width="11%">&nbsp;</td>
+<td width="11%">&nbsp;</td>
+<td width="14%">&nbsp;</td>
+</tr>
+
+<tr><td colspan="9">
+</td>
+<tr>
+<td height="302" valign="top" colspan="9">
+<table align="center" width="100%" border="1" cellpadding="1" cellspacing="0">
+  <tr valign="top">
+      <td height="258">
+      <table align="center" width="100%" border="1" id="planTable" cellpadding="1" cellspacing="0">
+        <tr align="center" bgcolor="#66CCCC" onMouseOver="">
+          <td width="6%">选择</td>
+          <td width="17%">起止时间</td>
+            <td width="15%">选择项目:</td>
+            <td width="15%">项目计划</td>
+            <td width="47%">工作计划内容</td>
+            </tr>
+        <tr align="center">
+          <td ><input type="checkbox" name="chk0"> </td>
+          <td ><input name="text" type="text" size="8"></td>
+          <td ><select name="object">
+            <option value="1">软件项目1</option>
+            <option value="1">软件项目2</option>
+          </select></td>
+          <td ><select name="select">
+            <option value="">计划编号1</option>
+            <option value="">计划编号2</option>
+          </select></td>
+          <td><textarea name="textarea" cols="40" onKeyDown="keyDwonEvent()"></textarea></td>
+          </tr>
+    </table>    </td>
+  </tr>
+</table></td>
+</tr>
+</table>
+</center>
+</body>
+</html>

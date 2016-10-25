@@ -1,0 +1,335 @@
+{% extends 'TestTools.html' %}
+
+{% block content %}
+
+    <ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="#newapipanel" aria-controls="newapipanel" role="tab" data-toggle="tab">新增接口</a></li>
+    <li role="presentation"><a href="#allapipanel" aria-controls="allapipanel" role="tab" data-toggle="tab">所有接口</a></li>
+    </ul>
+    <form class="form-inline" role="form" id="showDataForm" >
+          <div class="panel-body">
+<!-- newapipanel begin -->
+            <div class="row rowitem">
+                <div class="col-lg-9">
+					<div class="form-group">
+		          		<select id="api_method" class="form-control">
+							<option value="GET">GET</option>
+							<option value="POST" selected="">POST</option>
+							<option value="PUT">PUT</option>
+							<option value="PATCH">PATCH</option>
+							<option value="DELETE">DELETE</option>
+							<option value="COPY">COPY</option>
+							<option value="HEAD">HEAD</option>
+							<option value="OPTIONS">OPTIONS</option>
+							<option value="LINK">LINK</option>
+							<option value="UNLINK">UNLINK</option>
+							<option value="PURGE">PURGE</option>
+						</select>
+		          	</div>
+					<div class='form-group'>
+						<input type="text" class="form-control" id="http_url_input" title="HTTP接口URL" alt="HTTP接口URL" value="" placeholder ="http://" />
+					</div>
+                    <div class="form-group">
+		          		<select id="api_contentType" class="form-control">
+							<option value="application/json; charset=utf-8">application/json</option>
+						</select>
+		          	</div>
+{#                    <button class='btn btn-primary' type="button" onClick="Apitest()" >发送请求</button>#}
+                    <button class='btn btn-primary' type="button" onClick="Apitest()" >发送请求</button>
+                    <button class='btn btn-primary' onclick="saveapi()" class="btn btn-warning">保存</button>
+                </div>
+
+{#					<button type="button" class="btn btn-primary" id="copy_btn" >复制结果</button>#}
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="checkbox" id='body_params' name="body_params" onclick="params_togg();" checked="checked">请求Body参数
+{#					<input type="checkbox" name="body_headers" onclick="headers_togg();" checked="checked">请求Header#}
+				</div>
+                <br>
+				<table id="params_table" class="table table-hover">
+					<thead>
+				        <tr>
+                            <td width="6%">选择</td>
+				            <th width="35%">参数名称</th>
+				            <th>参数值</th>
+				        </tr>
+                        <tr>
+
+                        </tr>
+				    </thead>
+				    <tbody>
+				    	<tr id="params_end">
+				    		<td colspan="2">
+				    			<button class='btn btn-primary' id="add_url_parameter" onClick="addLine()"type="button">添加参数</button>
+{#                                <button class='btn btn-primary' id="add_url_parameter" onClick="addLine()" type="button" >添加参数</button>#}
+                                <button class="btn btn-danger" id="del_url_parameter" onClick="delLine()" type="button">删除参数</button>
+				    		</td>
+				    	</tr>
+				    </tbody>
+                </table>
+
+                <div class="row rowitem">
+                <div class="col-lg-9">
+                    状态码: <span id="statuscode">
+
+                </span> 响应时间：<span id="elapsedtime">&nbsp&nbsp&nbsp</span>
+                    <ul class="nav nav-tabs rowitem">
+                        <li role="presentation" class="active"><a href="#resp-body" onclick="refreshbody()" aria-controls="resp-body" role="tab" data-toggle="tab">Body</a></li>
+                        <li role="presentation"><a href="#resp-headers" aria-controls="resp-headers" role="tab" data-toggle="tab">Headers</a></li>
+                        <li role="presentation"><a href="#resp-cookies" aria-controls="resp-cookies" role="tab" data-toggle="tab">Cookies</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="resp-body">
+                            <textarea id="responsearea" class="form-control" rows="8" cols="120" placeholder=".col-xs-4"></textarea>
+                            <script>
+                                var respmirror = CodeMirror.fromTextArea(document.getElementById('responsearea'),{
+                                    indentUnit: 4,
+                                    lineNumbers: true,
+                                    lineWrapping:true,
+                                    mode: "python",
+                                    theme: "abcdef"
+                                })
+                                respmirror.setSize("100%","400px")
+                            </script>
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="resp-headers" style="height:170px">
+                            <div class="panel-body" id="resp-headers-panel">
+                                no headers
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="resp-cookies" style="height:170px">
+                            <div class="panel-body" id="resp-cookies-panel">
+                                no cookies
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+        </div>
+
+    </form>
+<script language="JavaScript">
+    var param_cnt = 0;
+    function addLine(){
+        param_cnt++;
+					add_parameter(param_cnt, "", "")
+    }
+
+{#    function addLine(){#}
+{#            var newLine = params_table.rows.length;#}
+{#            var row = params_table.insertRow(newLine);#}
+{##}
+{#            var col = row.insertCell(0);#}
+{#            col.innerHTML = "<input type=checkbox name = chk " + newLine + " >";#}
+{#            col = row.insertCell(1);#}
+{#            col.innerHTML = "<input type=text name=p_name_' + cnt + ' size=15 class=form-control>";#}
+{#            col = row.insertCell(2);#}
+{#            col.innerHTML = "<input type=text name=p_value_' + cnt + 'size=35 class=form-control>";#}
+{#            return newLine;#}
+{#        }#}
+
+     function delLine(){
+            var i;
+            var count;
+            count = params_table.rows.length;
+            alert(count)
+            if(count>=4){
+            params_table.deleteRow(params_table.rows.length-3)
+                for(i=0;i<count-1;i++){
+                    if(document.chk[i].checked){
+                        alert("aa");
+                    }
+                }
+            }
+        }
+
+     function params_togg() {
+					if ($("input[name=body_params]:checked") && $("input[name=body_params]:checked").length > 0) {
+						$("#params_table").show();
+                        alert('on')
+						$.cookie("body_on", "on")
+					} else {
+						$("#params_table").hide();
+                        alert('cuo')
+						$.cookie("body_on", "")
+					}
+				}
+
+{#	function headers_togg() {#}
+{#					if ($("input[name=body_headers]:checked").length && $("input[name=body_headers]:checked").length > 0) {#}
+{#						$("#headers_table").show();#}
+{#						$.cookie("header_on", "on")#}
+{#					} else {#}
+{#						$("#headers_table").hide();#}
+{#						$.cookie("header_on", "")#}
+{#					}#}
+{#				}#}
+
+    function add_parameter(cnt, name, value) {
+					if (name == "undefined" || name == null) {
+						name = ""
+					}
+					if (value == "undefined" || value == null) {
+						value = ""
+					}
+					$("#params_end").before('	<tr class="params_p" cnt="' + cnt + '">	<td><input type=checkbox name = chk " + newLine + " ></td>	<td><input class="params_name input-text" type="text" name="p_name_' + cnt + '" title="参数名称" alt="参数名称" value="' + name + '" maxlength="100"/>	</td><td><input class="params_value input-text" type="text" name="p_value_' + cnt + '" title="参数数值" alt="参数数值" value="' + value + '" maxlength="5000"/>															</td>						</tr>					')
+				}
+
+    function get_all_parameter() {
+                    alert('jije')
+					var params = new Array();
+					$(".params_p").each(function() {
+						var cnt = $(this).attr("cnt");
+                        alert(cnt)
+						var name = $(this).find("input[name=p_name_" + cnt + "]").val();
+						var value = $(this).find("input[name=p_value_" + cnt + "]").val();
+{#						if (is_empty(name) || is_empty(value)) {#}
+{#							return false#}
+{#						}#}
+						params.push({
+							name: name,
+							value: value
+						})
+					});
+
+					return params
+
+				}
+
+  function params_2_str(params) {
+					var str = "";
+					for (var i = 0; i < params.length; i++) {
+						var p = params[i];
+						if (p.name) {
+							str = str + "&" + p.name + "=" + p.value
+						}
+					}
+					if (str.length > 1) {
+						str = str.substring(1)
+					}
+                    alert(str)
+					return str
+				}
+
+
+     function Apitest(){
+           var method = $("#api_method").val()
+           var url = $("#http_url_input").val()
+         var page_content = $("#api_contentType").val()
+          if (!url) {
+						alert("接口链接为空，请填写后再请求！");
+						return
+					}
+          var str_data=$("#showDataForm input").map(function(){
+                return ($(this).attr("name")+'='+$(this).val());
+            }).get().join("&") ;
+         var params = get_all_parameter();
+         $.cookie("params", params_2_str(params));
+         $.cookie("http_url", url);
+         $.cookie("method", method);
+         alert($.cookie("http_url"))
+         alert($.cookie("params"))
+         var para = $.cookie("params")
+
+
+
+{#          var str_data=$("#showDataForm input").map(function(){#}
+{#                return ($(this).attr("name")+'='+$(this).val());#}
+{#            }).get().join("&") ;#}
+
+         alert('2342')
+         alert(url)
+         alert(method)
+         alert(para)
+         alert(page_content)
+{#         $.get("http://192.168.3.84:8091/TestTools/interf_test/",#}
+{#                 {"method":method,#}
+{#                        "url":url,#}
+{#                        "data":para},#}
+{#                 function(data){#}
+{#                    alert("Data Loaded: " + data);#}
+{#                }#}
+
+
+            $.ajax({
+                url: url+'?'+para,  //'提交的URL',
+                type:"post",        ////提交的方式
+                cache: false,
+                async: false,
+
+{#                contentType: "application/json; charset=utf-8",#}
+                contentType:page_content,
+                dataType: 'json',
+                data:{"meth":method,
+                    "par":params},
+                beforeSend: LoadFunction, //加载执行方法
+                error: erryFunction,  //错误执行方法
+                success: succFunction //成功执行方法
+
+            })
+            function LoadFunction(){
+                    $("#responsearea").html('加载中...');
+                }
+            function erryFunction() {
+             alert("error");
+            }
+
+            function succFunction(data) {
+                alert(data.status)
+                alert(data.responseText)
+                $("#statuscode").html(data.status)
+                $("#responsearea").html('{"message":'+data.message+',"status":'+data.status+'}');
+
+
+{#                var json = eval(data);#}
+{#                alert(json.responseText)#}
+{#                $("#responsearea").html(data.response);#}
+
+{#                $.each(json, function (index, item) {#}
+{##}
+{#                    alert(index,item)#}
+{#                    //循环获取数据#}
+{#                    alert(json[index],json[item]);#}
+{#                    alert(item.message,item.status)#}
+{##}
+{#                    var Key = json[index].key;#}
+{#                    var Info = json[index].info;#}
+{#                     $("#responsearea").html('{"message":'+item.message+',"status":'+item.status+'}');#}
+{##}
+{#                    $("#responsearea").html(json.response);#}
+{##}
+{##}
+{#                });#}
+{#                $("#responsearea").html.append(item);#}
+
+
+
+            }
+
+
+        }
+
+
+
+
+
+</script>
+
+
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/bootstrap/js/jquery.min.js"></script>
+    <script src="/static/js/json2.js"></script>
+    <script src="/static/js/jquery.zclip.js"></script>
+    <script src="/static/js/JSONFormatter.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
+    <script src="/static/js/jquery.cookie.min.js"></script>
+    <script src="/static/js/jquery.dialogbox.js"></script>
+    <script src="/static/js/jquery.form.js"></script>
+    <script src="/static/js/adsbygoogle.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/js/docs.min.js"></script>
+
+{% endblock %}

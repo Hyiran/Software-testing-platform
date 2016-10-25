@@ -1,0 +1,423 @@
+{#{% block content %}#}
+{#    <form class="form-inline" role="form" style="border: thin solid #A4AA04;padding:0 20px;">#}
+{#				<div class='row' id="params_start col-sm-2">#}
+{#					<div class="form-group">#}
+{#		          		<select id="api_method" class="form-control">#}
+{#							<option value="GET">GET</option>#}
+{#							<option value="POST" selected="">POST</option>#}
+{#							<option value="PUT">PUT</option>#}
+{#							<option value="PATCH">PATCH</option>#}
+{#							<option value="DELETE">DELETE</option>#}
+{#							<option value="COPY">COPY</option>#}
+{#							<option value="HEAD">HEAD</option>#}
+{#							<option value="OPTIONS">OPTIONS</option>#}
+{#							<option value="LINK">LINK</option>#}
+{#							<option value="UNLINK">UNLINK</option>#}
+{#							<option value="PURGE">PURGE</option>#}
+{#						</select>#}
+{#		          	</div>#}
+{#					<div class='form-group'>#}
+{#						<input type="text" class="form-control" id="http_url_input" title="HTTP接口URL" alt="HTTP接口URL" value="" placeholder ="http://" />#}
+{#					</div>#}
+{#                    <button type="button" class="btn btn-primary" id="http_test">发送请求</button>#}
+{#					<button type="button" class="btn btn-primary" id="copy_btn" >复制结果</button>#}
+{#					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#}
+{#					<input type="checkbox" name="body_params" onclick="params_togg();" checked="checked">请求Body参数#}
+{#					<input type="checkbox" name="body_headers" onclick="headers_togg();" checked="checked">请求Header#}
+{#				</div>#}
+{#                <br>#}
+{#				<table id="params_table" class="table table-hover">#}
+{#					<thead>#}
+{#				        <tr>#}
+{#				            <th width="35%">Body参数名称</th>#}
+{#				            <th>Body参数值</th>#}
+{#				        </tr>#}
+{#				    </thead>#}
+{#				    <tbody>#}
+{#				    	<tr id="params_end">#}
+{#				    		<td colspan="2">#}
+{#				    			<button class='btn btn-primary' id="add_url_parameter" type="button">添加参数</button>#}
+{#				    			<button class='btn btn-primary' id="add_raw_url_parameter" type="button">RAW批量添加</button>#}
+{#				    		</td>#}
+{#				    	</tr>#}
+{#				    </tbody>#}
+{#                </table>#}
+{#				<table id="response_table" class="table table-bordered">#}
+{#					<thead>#}
+{#				        <tr>#}
+{#				            <th>Response Body</th>#}
+{#				        </tr>#}
+{##}
+{#				    </thead>#}
+{#				    <tbody>#}
+{#				    	<tr>#}
+{#				        	<td valign="top">#}
+{#				        		<textarea class="form-control" rows="8" cols="100" placeholder=".col-xs-4"></textarea>#}
+{#				        	</td>#}
+{#				        </tr>#}
+{#				    </tbody>#}
+{#				</table>#}
+{#    </form>#}
+{#    <script>#}
+{#		        function params_togg() {#}
+{#					if ($("input[name=body_params]:checked") && $("input[name=body_params]:checked").length > 0) {#}
+{#						$("#params_table").show();#}
+{#						$.cookie("body_on", "on")#}
+{#					} else {#}
+{#						$("#params_table").hide();#}
+{#						$.cookie("body_on", "")#}
+{#					}#}
+{#				}#}
+{##}
+{#				function headers_togg() {#}
+{#					if ($("input[name=body_headers]:checked").length && $("input[name=body_headers]:checked").length > 0) {#}
+{#						$("#headers_table").show();#}
+{#						$.cookie("header_on", "on")#}
+{#					} else {#}
+{#						$("#headers_table").hide();#}
+{#						$.cookie("header_on", "")#}
+{#					}#}
+{#				}#}
+{#				var result_text = "";#}
+{#				$("#copy_btn").zclip({#}
+{#					path: "res/ZeroClipboard_zclip.swf",#}
+{#					copy: function() {#}
+{#						return $('#output').val();#}
+{#					}#}
+{#				});#}
+{##}
+{#				function add_parameter(cnt, name, value) {#}
+{#					if (name == "undefined" || name == null) {#}
+{#						name = ""#}
+{#					}#}
+{#					if (value == "undefined" || value == null) {#}
+{#						value = ""#}
+{#					}#}
+{#					$("#params_end").before('						<tr class="params_p" cnt="' + cnt + '">							<td>								<input class="params_name input-text" type="text" name="p_name_' + cnt + '" title="参数名称" alt="参数名称" value="' + name + '" maxlength="100"/>							</td>							<td>								<input class="params_value input-text" type="text" name="p_value_' + cnt + '" title="参数数值" alt="参数数值" value="' + value + '" maxlength="5000"/>								<button class="button danger tiny" onclick="javascript:del_param(this);" type="button">删除参数</button>							</td>						</tr>					')#}
+{#				}#}
+{##}
+{#				function add_header(cnt, name, value) {#}
+{#					if (name == "undefined" || name == null) {#}
+{#						name = ""#}
+{#					}#}
+{#					if (value == "undefined" || value == null) {#}
+{#						value = ""#}
+{#					}#}
+{#					$("#headers_end").before('						<tr class="headers_p" cnt="' + cnt + '">							<td>								<input class="headers_name input-text" type="text" name="h_name_' + cnt + '" title="header名称" alt="header名称" value="' + name + '" maxlength="100"/>							</td>							<td>								<input class="headers_value input-text" type="text" name="h_value_' + cnt + '" title="header数值" alt="header数值" value="' + value + '" maxlength="5000"/>								<button class="button danger tiny" onclick="javascript:del_param(this);" type="button">删除参数</button>							</td>						</tr>					')#}
+{#				}#}
+{##}
+{#				function get_all_parameter() {#}
+{#					var params = new Array();#}
+{#					$(".params_p").each(function() {#}
+{#						var cnt = $(this).attr("cnt");#}
+{#						var name = $(this).find("input[name=p_name_" + cnt + "]").val();#}
+{#						var value = $(this).find("input[name=p_value_" + cnt + "]").val();#}
+{#						if (is_empty(name) || is_empty(value)) {#}
+{#							return false#}
+{#						}#}
+{#						params.push({#}
+{#							name: name,#}
+{#							value: value#}
+{#						})#}
+{#					});#}
+{#					return params#}
+{#				}#}
+{##}
+{#				function get_all_header() {#}
+{#					var headers = new Array();#}
+{#					$(".headers_p").each(function() {#}
+{#						var cnt = $(this).attr("cnt");#}
+{#						var name = $(this).find("input[name=h_name_" + cnt + "]").val();#}
+{#						var value = $(this).find("input[name=h_value_" + cnt + "]").val();#}
+{#						if (is_empty(name) || is_empty(value)) {#}
+{#							return false#}
+{#						}#}
+{#						headers.push({#}
+{#							name: name,#}
+{#							value: value#}
+{#						})#}
+{#					});#}
+{#					return headers#}
+{#				}#}
+{#				var param_cnt = 0;#}
+{#				$("#add_url_parameter").click(function() {#}
+{#					var input_len = $("#params_table input").size();#}
+{#					param_cnt++;#}
+{#					add_parameter(param_cnt, "", "")#}
+{#				});#}
+{#				$('#add_raw_url_parameter').click(function() {#}
+{#		            $('body').dialogbox({type:"text",title:"批量添加Body参数",message:"输入Raw参数，例如：id=123&sale=yes&deleted=0"}, function($btn, $ans) {#}
+{#		                if($btn == "close") {#}
+{#		                    return;#}
+{#		                }#}
+{#		                else if($btn == "ok") {#}
+{#		                    var raw = $ans;#}
+{#						  	if (raw == null || raw == "") {#}
+{#						  		return;#}
+{#						    }#}
+{#						    var params = str_2_params(raw);#}
+{#						    if (params) {#}
+{#						    	for (var i = 0; i < params.length; i++) {#}
+{#						    		param_cnt++;#}
+{#						    		add_parameter(param_cnt, params[i]['name'], params[i]['value']);#}
+{#						    	};#}
+{#						    }#}
+{#		                }#}
+{#		            });#}
+{#				});#}
+{##}
+{#				var header_cnt = 0;#}
+{#				$("#add_api_headers").click(function() {#}
+{#					var input_len = $("#headers_table input").size();#}
+{#					header_cnt++;#}
+{#					add_header(header_cnt, "", "")#}
+{#				});#}
+{##}
+{#				function params_2_str(params) {#}
+{#					var str = "";#}
+{#					for (var i = 0; i < params.length; i++) {#}
+{#						var p = params[i];#}
+{#						if (p.name) {#}
+{#							str = str + "&" + p.name + "=" + p.value#}
+{#						}#}
+{#					}#}
+{#					if (str.length > 1) {#}
+{#						str = str.substring(1)#}
+{#					}#}
+{#					return str#}
+{#				}#}
+{##}
+{#				function str_2_params(str) {#}
+{#					try {#}
+{#						var params = new Array();#}
+{#						var ps = str.split("&");#}
+{#						var pv = null;#}
+{#						for (var i = 0; i < ps.length; i++) {#}
+{#							pv = ps[i].split("=");#}
+{#							params.push({#}
+{#								name: pv[0],#}
+{#								value: pv[1],#}
+{#								method: "post"#}
+{#							})#}
+{#						}#}
+{#						return params#}
+{#					} catch (e) {#}
+{#						return false#}
+{#					}#}
+{#				}#}
+{##}
+{#				function load_cookie() {#}
+{#					var http_url = $.cookie("http_url");#}
+{#					var method = $.cookie("method");#}
+{#					var params = $.cookie("params");#}
+{#					if (is_empty(params)) {#}
+{#						params = false#}
+{#					} else {#}
+{#						params = str_2_params(params)#}
+{#					}#}
+{#					var headers = $.cookie("headers");#}
+{#					if (is_empty(headers)) {#}
+{#						headers = false#}
+{#					} else {#}
+{#						headers = str_2_params(headers)#}
+{#					}#}
+{#					var header_on = $.cookie("header_on");#}
+{#					var body_on = $.cookie("body_on");#}
+{#					if (!header_on) {#}
+{#						$("input[name=body_headers]").click()#}
+{#					}#}
+{#					if (!body_on) {#}
+{#						$("input[name=body_params]").click()#}
+{#					}#}
+{#					if (http_url) {#}
+{#						$("#http_url_input").val(http_url)#}
+{#					}#}
+{#					if (method) {#}
+{#						$("#api_method").val(method)#}
+{#					}#}
+{#					if (params) {#}
+{#						for (var i = 0; i < params.length; i++) {#}
+{#							param_cnt++;#}
+{#							add_parameter(param_cnt, params[i]["name"], params[i]["value"])#}
+{#						}#}
+{#					}#}
+{#					if (headers) {#}
+{#						for (var i = 0; i < headers.length; i++) {#}
+{#							header_cnt++;#}
+{#							add_header(header_cnt, headers[i]["name"], headers[i]["value"])#}
+{#						}#}
+{#					}#}
+{#				}#}
+{#				if ($("#login_uid") && $("#login_uid").length > 0) {#}
+{#					load_cookie()#}
+{#				}#}
+{#				$("#http_test").click(function() {#}
+{#					var http_url = $("#http_url_input").val();#}
+{#					var method = $("#api_method").val();#}
+{#					var params = get_all_parameter();#}
+{#					var headers = get_all_header();#}
+{#					$.cookie("http_url", http_url);#}
+{#					$.cookie("method", method);#}
+{#					$.cookie("params", params_2_str(params));#}
+{#					$.cookie("headers", params_2_str(headers));#}
+{#					if (is_empty(http_url)) {#}
+{#						alert("接口链接为空，请填写后再请求！");#}
+{#						return#}
+{#					}#}
+{#					if (params === false) {#}
+{#						alert("参数填写为空，请填写完整之后再试！");#}
+{#						return#}
+{#					}#}
+{#					if (headers === false) {#}
+{#						alert("Header填写为空，请填写完整之后再试！");#}
+{#						return#}
+{#					}#}
+{#					$("#response_header").html("执行中，请等待...");#}
+{#					$("#output").val("");#}
+{#					$.post("include/httptest.inc.new.php", {#}
+{#						url: http_url,#}
+{#						params: params,#}
+{#						method: method,#}
+{#						headers: headers#}
+{#					}, function(data) {#}
+{#						if (data.success == 1) {#}
+{#							result_text = data.message;#}
+{#							if (typeof(result_text) == "object") {#}
+{#								result_text = JSON.stringify(result_text);#}
+{#							}#}
+{#							var json = null;#}
+{#							try {#}
+{#								json = JSON.parse(result_text)#}
+{#							} catch (e) {#}
+{#								json = null#}
+{#							}#}
+{#							json = null; //add by hustcc#}
+{#							if (json == null) {#}
+{#								// $("#output").append("<pre></pre>");#}
+{#								$("#output").val(result_text)#}
+{#							} else {#}
+{#								JSONFormatter.format(json, {#}
+{#									appendTo: "#output",#}
+{#									collapse: true,#}
+{#									list_id: "json"#}
+{#								})#}
+{#							}#}
+{#							$("#response_header").html("执行时间：" + data.time);#}
+{#							$("#response_header").append("<pre></pre>");#}
+{#							$("#response_header pre").text(data.header)#}
+{#						} else {#}
+{#							// $("#output").append("<pre></pre>");#}
+{#							$("#output").val(data.message);#}
+{#							$("#response_header").html("<span class='red'>执行失败</span>");#}
+{#						}#}
+{#					}, "json")#}
+{#				});#}
+{##}
+{#				function del_param(obj) {#}
+{#					$(obj).parent().parent().remove()#}
+{#				}#}
+{##}
+{#				function is_empty(str) {#}
+{#					if (str == null || str == "" || str == "undefined") {#}
+{#						return true#}
+{#					}#}
+{#					return false#}
+{#				};#}
+{#			</script>#}
+{##}
+{##}
+{#{% endblock %}#}
+<div class="modal fade" id="gridSystemModal" role="dialog" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">修改接口信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <span class="input-group-addon">名 称 </span>
+                    <input type="text" id="edit-name" maxlength="30" class="form-control">
+                </div>
+                <div class="input-group rowitem">
+                    <div class="input-group-btn">
+{#                        <button class="btn btn-default dropdown-toggle" id="edit-method-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width:80px">GET <span class="caret"></span></button>#}
+                        <button id="method-btn" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="width:80px">GET<span class="caret"></span></button>
+                            <ul class="dropdown-menu"role="menu" aria-labelledby="method-btn">
+                            <li><a class="edit-method-item" id="edit-method-GET">GET</a></li>
+                            <li><a class="edit-method-item" id="edit-method-POST">POST</a></li>
+                            <li><a class="edit-method-item" id="edit-method-PUT">PUT</a></li>
+                            <li><a href="javascript:void(0)" class="method-item">DELETE</a></li>
+                        </ul>
+{#                        <select id="api_method" class="form-control">#}
+{#							<option value="GET">GET</option>#}
+{#							<option value="POST" selected="">POST</option>#}
+{#							<option value="PUT">PUT</option>#}
+{#							<option value="PATCH">PATCH</option>#}
+{#							<option value="DELETE">DELETE</option>#}
+{#							<option value="COPY">COPY</option>#}
+{#							<option value="HEAD">HEAD</option>#}
+{#							<option value="OPTIONS">OPTIONS</option>#}
+{#							<option value="LINK">LINK</option>#}
+{#							<option value="UNLINK">UNLINK</option>#}
+{#							<option value="PURGE">PURGE</option>#}
+{#						</select>#}
+                    </div>
+                    <input id="edit-url" class="form-control" maxlength="120" type="text" placeholder="请求地址" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="closemodal" data-dismiss="modal">取消</button>
+                <button type="button" id="saveedit" class="btn btn-primary">保存修改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+{#                error: function(data){#}
+{#                    alert(data.result)#}
+{#                    alert(request.status)#}
+{#                    layer.msg(request.status)#}
+{#                },#}
+{#                success: function(data){#}
+{#                    //这是成功返回的数据，写自己的逻辑#}
+{#                    alert('234234sdfsdfsdf')#}
+{#                    alert( "Data Saved: " + data );#}
+{#                    if(data.result){#}
+{#                        body = data.response.data#}
+{#                        headers = data.response.headers#}
+{#                        cookies = data.response.cookies#}
+{#                        statuscode = data.response.statusCode#}
+{##}
+{##}
+{#                        $("#elapsedtime").html("<span style='color:blue;'>"+ data.response.elapsed +"s</span>")#}
+{#                        if(data.response.success){#}
+{#                            $("#statuscode").html("<span style='color:green'>"+ statuscode +"</span>")#}
+{#                        }else{#}
+{#                            $("#statuscode").html("<span style='color:red;font-weight:bold;'>"+ statuscode +"</span>")#}
+{#                        }#}
+{#                        try{#}
+{#                            respmirror.setValue(JSON.parse(body))#}
+{#                        }catch(e){#}
+{#                            respmirror.setValue(body)#}
+{#                        }finally{#}
+{#                            respmirror.refresh()#}
+{#                        }#}
+{##}
+{#                        if(headers){#}
+{#                            $("#resp-headers-panel").html(JSON.stringify(headers))#}
+{#                        }else{#}
+{#                            $("#resp-headers-panel").html("headers内没有内容")#}
+{#                        }#}
+{#                        if(cookies){#}
+{#                            $("#resp-cookies-panel").html(JSON.stringify(cookies))#}
+{#                        }else{#}
+{#                            $("#resp-cookies-panel").html("cookies内没有内容")#}
+{#                        }#}
+{##}
+{#                    }else{#}
+{#                        layer.msg("请求失败:"+ data.errorMsg)#}
+{#                        respmirror.setValue(data.errorMsg)#}
+{#                    }#}
+{#                }#}
